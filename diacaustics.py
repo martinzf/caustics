@@ -1,41 +1,37 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-def brute_force(f, i, mu, xlims, ylims, N):
-    # Plotting y(x) boundary
-    xmin, xmax = xlims
-    ymin, ymax = ylims
-    x = np.linspace(xmin, xmax, 100)
-    plt.plot(x, f(x))
-    plt.xlim(xmin, xmax)
-    plt.ylim(ymin, ymax)
-    # Calculating refraction
-    x = np.linspace(xmin, xmax, N)
-    dydx = np.gradient(f(x), x)
-    n = - np.array([- dydx, np.ones(N)]) / np.sqrt(dydx ** 2 + 1)
-    i = np.reshape(i, (2, 1))
-    d = mu * i - (mu * i.T @ n + np.sqrt(1 - mu ** 2 * (1 - (i.T @ n) ** 2))) * n
-    for k in range(N):
-        # Plotting incident rays
-        plt.plot([x[k], x[k] - 20 * i[0, 0]], [f(x[k]), f(x[k]) - 20 * i[1, 0]], linewidth = 0.5, color='r')
-        # Plotting refracted rays
-        plt.plot([x[k], x[k] + 20 * d[0, k]], [f(x[k]), f(x[k]) + 20 * d[1, k]], linewidth = 0.5, color='r')
-    plt.gca().set_aspect('equal')
-
-f = lambda x: - np.sqrt(1 - x ** 2)
-i = np.array([[0], [1]])
-mu = 1 / 1.3325
-xlims = [-1, 1]
-ylims = [-1, 3.5]
-n = 40
-brute_force(f, i, mu, xlims, ylims, n)
-plt.xlabel('X')
-plt.ylabel('Y')
-
-t = np.linspace(np.pi, 2 * np.pi, 100)
-c, s = np.cos(t), np.sin(t)
-x = mu ** 2 * np.cos(t) ** 3
-y = (- mu ** 3 * c ** 4 + (mu * c) ** 2 * s * np.sqrt(1 - (mu * c) ** 2) + mu) / (mu * s + np.sqrt(1 - (mu * c) ** 2))
-plt.plot(x, y, 'g--')
-plt.savefig('images/glass_refract.png', bbox_inches='tight')
-plt.show()
+def diacaustic(u: np.array, v: np.array, x: np.array, y: np.array, mu: float):
+    # Determines the direction of refracted rays and plots them
+    # (u, v) determine position along refracting surface
+    # (x, y) determine direction of incident rays
+    # mu is the refractive index ratio
+    # Calculating refractions
+    u_d = np.gradient(u)
+    v_d = np.gradient(v)
+    i = np.array([x, y]) / np.sqrt(x ** 2 + y ** 2) # Normalised incident rays
+    n = np.array([- v_d, u_d]) / np.sqrt(u_d ** 2 + v_d ** 2) # Normal direction (inward/outward)
+    i_dot_n = np.einsum('ij, ij->j', i, n)
+    sgn = - np.sign(i_dot_n) # Orientation of rays relative to normal
+    d = mu * i - (mu * i_dot_n + np.sqrt(1 - mu ** 2 * (1 - i_dot_n ** 2))) * n # Direction of refracted rays
+    # Plotting
+    xlim = plt.gca().get_xlim()
+    ylim = plt.gca().get_ylim()
+    plt.xlim(xlim)
+    plt.ylim(ylim)
+    xrange = xlim[1] - xlim[0]
+    yrange = ylim[1] - ylim[0]
+    lims = np.max([xrange, yrange])
+    # Incident rays
+    plt.plot(
+        [u, u - 2 * lims * i[0]],
+        [v, v - 2 * lims * i[1]],
+        linewidth = 0.5, color='r'
+    )
+    # Refracted rays
+    plt.plot(
+        [u, u + sgn * 2 * lims * d[0]], 
+        [v, v + sgn * 2 * lims * d[1]], 
+        linewidth = 0.5, color='r'
+    )
+    return d

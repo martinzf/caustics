@@ -3,11 +3,22 @@ import sympy as sp
 import matplotlib.pyplot as plt
 from skimage import color
 
-N = 256
+N = 1024
 
-ALPHA = np.pi / 3
-NG = 1.5
-MUMAX = .1
+def request_float(prompt: str) -> float:
+    # Gets user input
+    while True:
+        try:
+            answer = float(input(prompt))
+            if answer > 0:
+                return answer
+            print('Input must be strictly positive.')
+        except ValueError:
+            print(f'Input must be a float.') 
+
+ALPHA = request_float('Apex angle (rad): ')
+NG = request_float('Refractive index for green light: ')
+MUMAX = request_float('Maximum colour parameter: ')
 
 # Symbolic computation of y(x, \mu)
 m, a, ng, x = sp.symbols(r'\mu \alpha n_g x')
