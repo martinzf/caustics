@@ -3,22 +3,13 @@ import sympy as sp
 import matplotlib.pyplot as plt
 from skimage import color
 
-N = 1024
+N = 1024 # Grid side length
 
-def request_float(prompt: str) -> float:
-    # Gets user input
-    while True:
-        try:
-            answer = float(input(prompt))
-            if answer > 0:
-                return answer
-            print('Input must be strictly positive.')
-        except ValueError:
-            print(f'Input must be a float.') 
-
-ALPHA = request_float('Apex angle (rad): ')
-NG = request_float('Refractive index for green light: ')
-MUMAX = request_float('Maximum colour parameter: ')
+ALPHA = np.pi / 3
+NG = 1.5
+MUMAX = .1
+W = np.linspace(0, .6, N) # Figure width
+H = np.linspace(- .1, .2, N) # Figure height
 
 # Symbolic computation of y(x, \mu)
 m, a, ng, x = sp.symbols(r'\mu \alpha n_g x')
@@ -41,9 +32,7 @@ D, C = y_n.as_poly(m).all_coeffs()[1].as_poly(x).all_coeffs()
 F, E = y_n.as_poly(m).all_coeffs()[0].as_poly(x).all_coeffs()
 A, B, C, D, E, F = np.array([A, - B, C, - D, E, - F], dtype='float')
 
-w = np.linspace(0, .6, N)
-h = np.linspace(- .1, .2, N)
-X, Y = np.meshgrid(w, h)
+X, Y = np.meshgrid(W, H)
 MUp = (D * X - C + np.sqrt((C - D * X) ** 2 - 4 * (E - F * X) * (A - B * X - Y))) / (2 * (E - F * X))
 MUm = (D * X - C - np.sqrt((C - D * X) ** 2 - 4 * (E - F * X) * (A - B * X - Y))) / (2 * (E - F * X))
 
@@ -78,8 +67,8 @@ plt.imshow(RGB, origin='lower', aspect=.6, interpolation='bicubic', interpolatio
 plt.xlabel('X/L')
 plt.ylabel('Y/L')
 step = N // 4
-plt.xticks(np.arange(0, N, step), [f'{i:.2f}' for i in w[::step]])
-plt.yticks(np.arange(0, N, step), [f'{i:.2f}' for i in h[::step]])
+plt.xticks(np.arange(0, N, step), [f'{i:.2f}' for i in W[::step]])
+plt.yticks(np.arange(0, N, step), [f'{i:.2f}' for i in H[::step]])
 plt.show()
 
 # Plotting overlap region
