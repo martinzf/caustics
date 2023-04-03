@@ -2,7 +2,7 @@ import numpy as np
 import sympy as sp
 import matplotlib.pyplot as plt
 
-N = 1024 # Grid side length
+N = 1024 # Grid resolution, N ** 2 points
 
 ALPHA = np.pi / 3
 NG = 1.5
