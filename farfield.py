@@ -6,18 +6,22 @@ n = 256
 x = np.linspace(- 5, 5, n)
 y = np.linspace(- 5, 5, n)
 X, Y = np.meshgrid(x, y)
+
+# Generating random wavefront
 C = np.exp(- (X ** 2 + Y ** 2))
 B = np.exp(2j * np.pi * np.random.randn(*np.shape(X)))
 A = signal.convolve(B, C, 'same')
 I = np.sqrt(np.mean(np.abs(A) ** 2))
 Z = np.real(A / I)
 
+# Jacobian and inverse Jacobian
 O1, O2 = np.gradient(- Z)
 O1x, O1y = np.gradient(O1)
 O2x, O2y = np.gradient(O2)
 J = O1x * O2y - O1y * O2x
 D = np.abs(1 / J)
 
+# Plotting
 step = n // 4
 fig1, ax1 = plt.subplots()
 im1 = ax1.imshow(Z, cmap='seismic', origin='lower')

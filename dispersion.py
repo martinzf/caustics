@@ -9,6 +9,7 @@ NG = 1.5
 MUMAX = .1
 W = np.linspace(0, .6, N) # Figure width
 H = np.linspace(- .1, .2, N) # Figure height
+ASPECT = (H[-1] - H[0]) / (W[-1] - W[0]) # Figure aspect
 
 # Symbolic computation of y(x, \mu)
 m, a, ng, x = sp.symbols(r'\mu \alpha n_g x')
@@ -73,7 +74,7 @@ def gamma(V):
 RGB = gamma(RGB)
 
 # Plotting rays
-plt.imshow(RGB, origin='lower', aspect=.6)
+plt.imshow(RGB, origin='lower', aspect=ASPECT)
 plt.xlabel('X/L')
 plt.ylabel('Y/L')
 step = N // 4
@@ -87,7 +88,7 @@ mask3d = np.tile(mask, [3, 1, 1]).transpose([1, 2, 0]) # NxNx3
 RGB[mask3d] = 0
 
 plt.figure()
-plt.imshow(RGB, origin='lower', aspect=.6)
+plt.imshow(RGB, origin='lower', aspect=ASPECT)
 plt.xlabel('X/L')
 plt.ylabel('Y/L')
 plt.axis('off')
