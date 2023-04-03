@@ -9,9 +9,7 @@ ax4 = plt.subplot(grid[1, 0:3])
 ax5 = plt.subplot(grid[1, 3:6])
 axes = [ax1, ax2, ax3, ax4, ax5]
 
-
-x = np.linspace(-1, 1, 100)
-ax1.plot(x, x ** 2)
+ax1.plot(0, 0, '.')
 
 x = np.linspace(-1, 1, 100)
 y = np.abs(x) ** (2/3)
@@ -48,5 +46,4 @@ for i in range(5):
     axes[i].set_title(titles[i])
     axes[i].text(.1, .85, f'codim={codim[i]}', bbox=dict(facecolor='lightgrey'), transform=axes[i].transAxes)
 
-plt.savefig('images/catastrophes.png', bbox_inches='tight')
 plt.show()
