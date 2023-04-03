@@ -1,7 +1,6 @@
 import numpy as np
 import sympy as sp
 import matplotlib.pyplot as plt
-from skimage import color
 
 N = 1024 # Grid side length
 
@@ -13,7 +12,6 @@ H = np.linspace(- .1, .2, N) # Figure height
 
 # Symbolic computation of y(x, \mu)
 m, a, ng, x = sp.symbols(r'\mu \alpha n_g x')
-t1, t3, L1 = sp.symbols(r'\theta_1 \theta_3 L_1')
 t1 = sp.asin(sp.sin(a / 2) / (1 + m))
 t3 = sp.asin(ng * (1 + m) * sp.sin(a - t1))
 L1 = sp.cos(t1) / sp.cos(a - t1)
@@ -59,11 +57,23 @@ rp = np.array([x(WLp), y(WLp), z(WLp)]).transpose((1, 2, 0)) # NxNx3
 rm = np.array([x(WLm), y(WLm), z(WLm)]).transpose((1, 2, 0)) # NxNx3
 R = rp + rm
 
-# RGB conversion
-RGB = color.xyz2rgb(R) # NxNx3
+# XYZ to sRGB (Wikipedia)
+M = np.array([
+    [3.2404542, -1.5371385, -0.4985314],
+    [-0.9692660, 1.8760108, 0.0415560],
+    [0.0556434, -0.2040259, 1.0572252]
+])
+RGB = np.einsum('ij,klj->kli', M, R) # M @ R
+
+@np.vectorize
+def gamma(V):
+    if V < .0031308:
+        return V * 12.92
+    return 1.055 * V ** (1 / 2.4) - .055
+RGB = gamma(RGB)
 
 # Plotting rays
-plt.imshow(RGB, origin='lower', aspect=.6, interpolation='bicubic', interpolation_stage='rgba')
+plt.imshow(RGB, origin='lower', aspect=.6)
 plt.xlabel('X/L')
 plt.ylabel('Y/L')
 step = N // 4
@@ -73,11 +83,11 @@ plt.show()
 
 # Plotting overlap region
 mask = (np.abs(MUp) > MUMAX) + (np.abs(MUm) > MUMAX) # NxN
-mask3 = np.tile(mask, [3, 1, 1]).transpose([1, 2, 0]) # NxNx3
-RGB[mask3] = 0
+mask3d = np.tile(mask, [3, 1, 1]).transpose([1, 2, 0]) # NxNx3
+RGB[mask3d] = 0
 
 plt.figure()
-plt.imshow(RGB, origin='lower', aspect=.6, interpolation='bicubic', interpolation_stage='rgba')
+plt.imshow(RGB, origin='lower', aspect=.6)
 plt.xlabel('X/L')
 plt.ylabel('Y/L')
 plt.axis('off')
