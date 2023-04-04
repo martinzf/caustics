@@ -45,19 +45,23 @@ for i, xi in enumerate(x):
 fig1, ax1 = plt.subplots()
 im1 = ax1.imshow(Z, cmap='seismic', origin='lower')
 plt.colorbar(im1, ax=ax1)
+ax1.set_xlabel('X')
+ax1.set_ylabel('Y')
 
 fig2, ax2 = plt.subplots()
-im2 = ax2.imshow(invJacobian, cmap='gray', clim=(0, 150), origin='lower')
+im2 = ax2.imshow(invJacobian, cmap='gray', clim=(0, 200), origin='lower')
+ax2.set_xlabel('X')
+ax2.set_ylabel('Y')
 
 fig3, ax3 = plt.subplots()
-im3 = ax3.imshow(I, cmap='gray', clim=(0, 15), origin='lower', interpolation='bicubic')
+im3 = ax3.imshow(I, cmap='gray', clim=(0, 12), origin='lower', interpolation='bicubic')
+ax3.set_xlabel('A')
+ax3.set_ylabel('B')
 
 step = N // 5
 axes = [ax1, ax2, ax3]
 for ax in axes:
     ax.set_xticks(np.arange(0, N, step), [f'{i:.1f}' for i in x[::step]])
     ax.set_yticks(np.arange(0, N, step), [f'{i:.1f}' for i in y[::step]])
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
 
 plt.show()
