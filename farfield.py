@@ -23,8 +23,7 @@ Z = np.real(complex_amplitude / mean_sqr_amplitude) / FLAT
 O1, O2 = np.gradient(- Z, x, y)
 O1x, O1y = np.gradient(O1, x, y)
 O2x, O2y = np.gradient(O2, x, y)
-Jacobian = O1x * O2y - O1y * O2x
-invJacobian = np.abs(1 / Jacobian)
+Jacobian = np.abs(O1x * O2y - O1y * O2x)
 
 # Far field intensity
 I = np.zeros((N, N))
@@ -49,7 +48,7 @@ ax1.set_xlabel('X')
 ax1.set_ylabel('Y')
 
 fig2, ax2 = plt.subplots()
-im2 = ax2.imshow(invJacobian, cmap='gray', clim=(0, 200), origin='lower')
+im2 = ax2.imshow(Jacobian, cmap='gray_r', clim=(0, 1e-2), origin='lower')
 ax2.set_xlabel('X')
 ax2.set_ylabel('Y')
 
@@ -64,4 +63,7 @@ for ax in axes:
     ax.set_xticks(np.arange(0, N, step), [f'{i:.1f}' for i in x[::step]])
     ax.set_yticks(np.arange(0, N, step), [f'{i:.1f}' for i in y[::step]])
 
+fig1.savefig('images/wave_profile.png', bbox_inches='tight')
+fig2.savefig('images/singularities.png', bbox_inches='tight')
+fig3.savefig('images/intensity.png', bbox_inches='tight')
 plt.show()
