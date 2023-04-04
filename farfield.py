@@ -3,8 +3,9 @@ from scipy import signal
 import matplotlib.pyplot as plt
 
 N = 256 # Grid resolution, N ** 2 points
-SX = 1 / 8 # X Roughness
-SY = 1 / 8 # Y Roughness
+SX = 1 / 5 # X Roughness
+SY = 1 / 5 # Y Roughness
+FLAT = 50 # Flattening factor
 D = 5 # Distance to screen
 
 x = np.linspace(- 1, 1, N)
@@ -16,12 +17,12 @@ bell_curve = np.exp(- (X ** 2 / (2 * SX ** 2) + Y ** 2 / (2 * SY ** 2)))
 randn_phase = np.exp(2j * np.pi * np.random.randn(*np.shape(X)))
 complex_amplitude = signal.convolve(randn_phase, bell_curve, 'same')
 mean_sqr_amplitude = np.sqrt(np.mean(np.abs(complex_amplitude) ** 2))
-Z = np.real(complex_amplitude / mean_sqr_amplitude)
+Z = np.real(complex_amplitude / mean_sqr_amplitude) / FLAT
 
 # Jacobian and inverse Jacobian
-O1, O2 = np.gradient(- Z)
-O1x, O1y = np.gradient(O1)
-O2x, O2y = np.gradient(O2)
+O1, O2 = np.gradient(- Z, x, y)
+O1x, O1y = np.gradient(O1, x, y)
+O2x, O2y = np.gradient(O2, x, y)
 Jacobian = O1x * O2y - O1y * O2x
 invJacobian = np.abs(1 / Jacobian)
 
@@ -46,10 +47,10 @@ im1 = ax1.imshow(Z, cmap='seismic', origin='lower')
 plt.colorbar(im1, ax=ax1)
 
 fig2, ax2 = plt.subplots()
-im2 = ax2.imshow(invJacobian, cmap='gray', clim=(0, 5e6), origin='lower')
+im2 = ax2.imshow(invJacobian, cmap='gray', clim=(0, 150), origin='lower')
 
 fig3, ax3 = plt.subplots()
-im3 = ax3.imshow(I, cmap='gray', clim=(0, 10), origin='lower', interpolation='bicubic')
+im3 = ax3.imshow(I, cmap='gray', clim=(0, 15), origin='lower', interpolation='bicubic')
 
 step = N // 5
 axes = [ax1, ax2, ax3]
