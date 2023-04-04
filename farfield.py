@@ -44,7 +44,7 @@ for i, xi in enumerate(x):
 # Plotting
 fig1, ax1 = plt.subplots()
 im1 = ax1.imshow(Z, cmap='seismic', origin='lower')
-plt.colorbar(im1, ax=ax1)
+plt.colorbar(im1, ax=ax1, label='Z')
 ax1.set_xlabel('X')
 ax1.set_ylabel('Y')
 
@@ -55,8 +55,8 @@ ax2.set_ylabel('Y')
 
 fig3, ax3 = plt.subplots()
 im3 = ax3.imshow(I, cmap='gray', clim=(0, 12), origin='lower', interpolation='bicubic')
-ax3.set_xlabel('A')
-ax3.set_ylabel('B')
+ax3.set_xlabel("X'")
+ax3.set_ylabel("Y'")
 
 step = N // 5
 axes = [ax1, ax2, ax3]
