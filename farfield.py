@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 N = 256 # Grid resolution, N ** 2 points
 SX = 1 / 8 # X Roughness
 SY = 1 / 8 # Y Roughness
-D = 2 # Distance to screen
+D = 5 # Distance to screen
 
 x = np.linspace(- 1, 1, N)
 y = np.linspace(- 1, 1, N)
