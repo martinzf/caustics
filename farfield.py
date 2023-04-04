@@ -63,7 +63,4 @@ for ax in axes:
     ax.set_xticks(np.arange(0, N, step), [f'{i:.1f}' for i in x[::step]])
     ax.set_yticks(np.arange(0, N, step), [f'{i:.1f}' for i in y[::step]])
 
-fig1.savefig('images/wave_profile.png', bbox_inches='tight')
-fig2.savefig('images/singularities.png', bbox_inches='tight')
-fig3.savefig('images/intensity.png', bbox_inches='tight')
 plt.show()
