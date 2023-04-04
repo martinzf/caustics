@@ -31,6 +31,7 @@ D, C = y_n.as_poly(m).all_coeffs()[1].as_poly(x).all_coeffs()
 F, E = y_n.as_poly(m).all_coeffs()[0].as_poly(x).all_coeffs()
 A, B, C, D, E, F = np.array([A, - B, C, - D, E, - F], dtype='float')
 
+# Colour parameter
 X, Y = np.meshgrid(W, H)
 MUp = (D * X - C + np.sqrt((C - D * X) ** 2 - 4 * (E - F * X) * (A - B * X - Y))) / (2 * (E - F * X))
 MUm = (D * X - C - np.sqrt((C - D * X) ** 2 - 4 * (E - F * X) * (A - B * X - Y))) / (2 * (E - F * X))
